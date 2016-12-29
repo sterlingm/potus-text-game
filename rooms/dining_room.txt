@@ -1,0 +1,2 @@
+Dining Room
+Hallway3,Study

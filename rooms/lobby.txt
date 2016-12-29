@@ -1,2 +1,2 @@
 Lobby
-Entrance,Hallway1
+Entrance,Hallway1,Hallway9

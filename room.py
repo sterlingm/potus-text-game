@@ -16,7 +16,8 @@ class Room(object):
             self.add_connector(r)
 
     def print_info(self):
-        print("\nRoom:" + self.name)
-        print("Connections:")
+        #print 'In print_info, name: %s' % self.name
+        print '\nRoom:' + self.name
+        print 'Connections:'
         for c in self.connections:
             print("\t%s" % c)
