@@ -106,13 +106,13 @@ def begin(char, rooms):
 
     '''
 
-    print str_wel
-    print str_intro
+    #print str_wel
+    #print str_intro
     #printing.delay_print(str_wel)
     #printing.delay_print(str_intro)
     #printing.print_brb()
 
-    time.sleep(1.0)
+    #time.sleep(1.0)
 
     #printing.delay_print(str_story)
     #printing.delay_print(str_task)
@@ -120,38 +120,45 @@ def begin(char, rooms):
     #print str_story
     #print str_task
     
-    time.sleep(0.2)
-    printing.print_brb()
+    #time.sleep(0.2)
+    #printing.print_brb()
 
     #printing.delay_print(str_loc)
     #printing.delay_print(str_rules)
 
 
     str_prompt = "\nChoose an action"
-    str_actions = "Move,Interact,Quit"
+    str_actions = "Move,Interact,Look Around,Quit"
     
-    print str_prompt + str_actions
-    printing.print_actions(str_actions)
+    #print str_prompt + str_actions
+    #printing.print_actions(str_actions)
 
     
     while True:
-        var = raw_input("Enter a choice\n")
+
+        # New iteration
+        # Print the list of actions and get input
+        printing.print_actions(str_actions)
+        var = raw_input('\n')
+
         if var == 'm' or var == 'M':
+
             # List all rooms to move to
-            s = len(char.room.connections)
-            str_rooms = (" %s"*s % tuple(char.room.connections))
-            print "\nConnecting rooms:" + str_rooms
-
-            num = input("Enter a number\n")
-            r = rooms[char.room.connections[num]]
+            printing.print_locs(char.room.connections)
+            num = input("\n")
             
-
+            # Get the room and call switch_room
+            r = rooms[char.room.connections[num]]
             char.switch_room(rooms[ char.room.connections[num] ])
-            char.print_info()
 
             
         elif var == 'q' or var == 'Q':
             break
+        
+        # Print character info
+        print("\n***************Character Status**************")
+        char.print_info()
+        print("\n*********************************************")
 
 
 
