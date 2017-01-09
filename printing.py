@@ -62,15 +62,13 @@ def print_brb():
 # Split str on ',' and pr
 def print_actions(str_actions):
     print "\nChoose an action"
-    strs = str_actions.split(',')
-    for s in strs:
+    for s in str_actions:
         print "%s/%s: %s" % (s[0].lower(), s[0].upper(), s)
         
 def print_locs(str_locs):
     print("\n\nEnter an index for a connecting room:")
     for i, s in enumerate(str_locs):
         print "%i: %s" % (i, s)
-
 
 
 

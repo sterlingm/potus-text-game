@@ -5,6 +5,8 @@ import time
 import sys
 import os
 import printing
+import enemy
+import encounter
 
 
 def createRoomsFromDir(direc):
@@ -106,14 +108,14 @@ def begin(char, rooms):
 
     '''
 
+    # Print the opening message
     #print str_wel
     #print str_intro
-    #printing.delay_print(str_wel)
-    #printing.delay_print(str_intro)
     #printing.print_brb()
-
+    #print 'Press Enter to begin'
     #time.sleep(1.0)
 
+    # Print the game introduction
     #printing.delay_print(str_story)
     #printing.delay_print(str_task)
     #print str_loc
@@ -128,12 +130,24 @@ def begin(char, rooms):
 
 
     str_prompt = "\nChoose an action"
-    str_actions = "Move,Interact,Look Around,Quit"
+    str_actions = ['Move','Interact','Look Around','Quit']
     
-    #print str_prompt + str_actions
     #printing.print_actions(str_actions)
 
+
+
+    # Build EncounterAction objects
+    # char is a Character object passed in
+    # Create an enemy
+    print 'Creating Enemy'
+    e = enemy.Enemy()
+    enc = encounter.Encounter(char, e)
+    enc.print_intro_str()
+    enc.go()
     
+
+
+    # Begin the main loop to play the game
     while True:
 
         # New iteration
