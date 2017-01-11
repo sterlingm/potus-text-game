@@ -10,6 +10,30 @@ import encounter
 import random
 
 
+def populateRooms(rooms, fnames, lnames, enemy_types_dicts):
+    """ Goes through the list of rooms and puts random enemies in each one
+
+    Args:
+        rooms: List of Room objects
+    """
+    print 'In populateRooms'
+    
+    for key, r in rooms.items():
+        print 'Room %s' % r.name
+        num_enemies = random.randint(1,3)
+        print 'Number of enemies: %i' % num_enemies
+        for i in range(num_enemies):
+            # Randomly select type
+            # TODO: Find better way to get list of types
+            t = random.choice(enemy_types_dicts)
+            print 'Type: %s' % t
+            e = createEnemy(fnames, lnames, t)
+            e.print_info()
+            r.enemies.append(e)
+
+            
+
+
 def get_enemy_info_dicts(direc):
     """ Builds a list of dictionaries containing information for each enemy 
     type.
@@ -92,9 +116,9 @@ def createRoom(filename):
 def main():
     d = os.path.dirname(__file__)
     d_full_rooms = os.path.join(d, 'rooms')
-    d_full_enemy_types = os.path.join(d, 'enemy_types')
+    d_full_enemy_types_dict = os.path.join(d, 'enemy_types')
     print d_full_rooms
-    print d_full_enemy_types
+    print d_full_enemy_types_dict
     rooms = createRoomsFromDir(d_full_rooms)
     print 'Rooms found:'
     for key, value in rooms.items():
@@ -103,8 +127,8 @@ def main():
     # Once everything is initialized, begin game
     char = character.Character("sterling", rooms['Entrance'])
 
-    enemy_types = get_enemy_info_dicts(d_full_enemy_types)
-    #print enemy_types
+    enemy_types_dict = get_enemy_info_dicts(d_full_enemy_types_dict)
+    #print enemy_types_dict
 
     d_names = os.path.join(d, 'names')
     fnames_male_filename = os.path.join(d_names, 'first_names_male.txt')
@@ -126,16 +150,25 @@ def main():
     print fnames_female
     print lnames
 
-    e = createEnemy(fnames_male, lnames, enemy_types[0])
+    print '******Enemy Types*******'
+    print enemy_types_dict
+    e = createEnemy(fnames_male, lnames, enemy_types_dict[0])
+    print e
     e.print_info()
     print 'Rooms'
     rooms['Entrance'].add_enemy(e)
     rooms['Entrance'].print_info()
 
     
+    # Can create Enemies, Now create list of random enemies for each room
+    populateRooms(rooms, fnames_male, lnames, enemy_types_dict)
+    
+    print '************ Reprinting Room info ************'
+    for key,r in rooms.items():
+        r.print_info()
 
 
-    #begin(char, rooms)
+    begin(char, rooms)
 
 
 
@@ -252,6 +285,17 @@ def begin(char, rooms):
             r = rooms[char.room.connections[num]]
             char.switch_room(rooms[ char.room.connections[num] ])
 
+        elif var == 'l' or var == 'L':
+            # **************************************************
+            # Write a description of each room in its file
+            # and always print the description first
+            # **************************************************
+
+            # Then, print the enemies seen in the room:
+            print 'Enemies:'
+            for e in char.room.enemies:
+                e.print_info()
+            
             
         elif var == 'q' or var == 'Q':
             break
