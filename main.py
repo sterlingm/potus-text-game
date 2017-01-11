@@ -7,14 +7,66 @@ import os
 import printing
 import enemy
 import encounter
+import random
+
+
+def get_enemy_info_dicts(direc):
+    """ Builds a list of dictionaries containing information for each enemy 
+    type.
+
+    Args:
+        direc: Directory containing the enemy type files
+
+    Return:
+        result: List of dictionaries where each element corresponds to different 
+        enemy type
+    """
+    print 'In get_enemy_info'
+    result = []
+    print direc
+    li = os.listdir(direc)
+    print li
+    for filename in li:
+        print filename
+        p = os.path.join(direc, filename)
+        # Follow code in createRoom(filename) below 
+        lines = open(p).read().split('\n')
+        print lines
+        enemy_info = {'Type': lines[0], 'HP': int(lines[1]), 'Weakness': 
+                lines[2], 'Strength': lines[3]}
+        print enemy_info
+        result.append(enemy_info)
+    return result
+
+def createEnemy(fnames, lnames, t):
+    """ Create an instance of the Enemy class.
+
+    Args:
+        fnames: List of possible first names
+        lnames: List of possible last names
+        t: Dictionary containing enemy type information
+
+    Return:
+        Enemy instance
+    """
+    print 'In createEnemy'
+    fname = random.choice(fnames)
+    lname = random.choice(lnames)
+    print fname
+    print lname
+
+    e = enemy.Enemy(t['Type'], fname + " " + lname, t['HP'], t['Weakness'], 
+            t['Strength'])
+    return e
+
+    
+
 
 
 def createRoomsFromDir(direc):
     #print("In createRoomsFromDir, direc: %s" % direc)
     rooms = []
     rooms_dict = {'item1' : 1}
-    li = os.listdir(direc)
-    print li
     for filename in os.listdir(direc):
         p = os.path.join(direc, filename)
         #print('Next filename %s' % p)
@@ -39,16 +91,51 @@ def createRoom(filename):
 
 def main():
     d = os.path.dirname(__file__)
-    d_full = os.path.join(d, 'rooms')
-    print d_full
-    rooms = createRoomsFromDir(d_full)
+    d_full_rooms = os.path.join(d, 'rooms')
+    d_full_enemy_types = os.path.join(d, 'enemy_types')
+    print d_full_rooms
+    print d_full_enemy_types
+    rooms = createRoomsFromDir(d_full_rooms)
     print 'Rooms found:'
     for key, value in rooms.items():
         value.print_info()
 
     # Once everything is initialized, begin game
     char = character.Character("sterling", rooms['Entrance'])
-    begin(char, rooms)
+
+    enemy_types = get_enemy_info_dicts(d_full_enemy_types)
+    #print enemy_types
+
+    d_names = os.path.join(d, 'names')
+    fnames_male_filename = os.path.join(d_names, 'first_names_male.txt')
+    fnames_female_filename = os.path.join(d_names, 'first_names_female.txt')
+    lnames_filename = os.path.join(d_names, 'last_names.txt')
+    print 'after getting filename'
+
+    print fnames_male_filename
+
+    fnames_male = open(fnames_male_filename).read().split('\n')
+    fnames_female = open(fnames_female_filename).read().split('\n')
+    lnames = open(lnames_filename).read().split('\n')
+
+    # Remove '' from lists
+    fnames_male.remove('')
+    fnames_female.remove('')
+    lnames.remove('')
+    print fnames_male
+    print fnames_female
+    print lnames
+
+    e = createEnemy(fnames_male, lnames, enemy_types[0])
+    e.print_info()
+    print 'Rooms'
+    rooms['Entrance'].add_enemy(e)
+    rooms['Entrance'].print_info()
+
+    
+
+
+    #begin(char, rooms)
 
 
 
@@ -140,7 +227,7 @@ def begin(char, rooms):
     # char is a Character object passed in
     # Create an enemy
     print 'Creating Enemy'
-    e = enemy.Enemy()
+    e = enemy.Enemy(0, 'James McCotter', 10, ['Small talk'], [])
     enc = encounter.Encounter(char, e)
     enc.print_intro_str()
     enc.go()
