@@ -8,6 +8,7 @@ import printing
 import enemy
 import encounter
 import random
+import potus_battle
 
 
 def populateRooms(rooms, fnames, lnames, enemy_types_dicts):
@@ -288,6 +289,11 @@ def begin(char, rooms):
     #enc.go()
     
 
+    # Encounter with President
+    p = potus_battle.POTUSBattle(char)
+    p.print_options()
+    
+
     done = False
 
     # Begin the main loop to play the game
@@ -355,9 +361,7 @@ def begin(char, rooms):
 
 
 
-
-    # List all people to talk to
-
+        
 
     
 
