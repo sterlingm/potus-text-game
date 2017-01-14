@@ -71,4 +71,9 @@ def print_locs(str_locs):
         print "%i: %s" % (i, s)
 
 
+def print_enemies(enemies):
+    print("\n\nEnter an index for a connecting room:")
+    for i, e in enumerate(enemies):
+        print "%i: %s" % (i, e.name)
+
 

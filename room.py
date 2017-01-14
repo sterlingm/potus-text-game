@@ -6,6 +6,7 @@ class Room(object):
         self.name = name
         self.connections = []
         self.enemies = []
+        self.potus = False
 
 
     # Connections are stored as strings of the room names
@@ -17,6 +18,11 @@ class Room(object):
             self.add_connector(r)
 
     def add_enemy(self, e):
+        """ Adds an enemy to the room
+
+        Args:
+            e: Enemy instance
+        """
         print 'In room.add_enemy'
         self.enemies.append(e)
 
@@ -29,3 +35,4 @@ class Room(object):
         print 'Enemies:'
         for e in self.enemies:
             e.print_info()
+        print 'POTUS: %r' % self.potus

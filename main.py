@@ -31,7 +31,7 @@ def populateRooms(rooms, fnames, lnames, enemy_types_dicts):
             e.print_info()
             r.enemies.append(e)
 
-            
+
 
 
 def get_enemy_info_dicts(direc):
@@ -112,7 +112,6 @@ def createRoom(filename):
 
     return r
     
-
 def main():
     d = os.path.dirname(__file__)
     d_full_rooms = os.path.join(d, 'rooms')
@@ -162,11 +161,23 @@ def main():
     
     # Can create Enemies, Now create list of random enemies for each room
     populateRooms(rooms, fnames_male, lnames, enemy_types_dict)
+    print 'Done populating'
+    print len(rooms)
+
+    i = random.randint(0,len(rooms))
+    print 'i: %i' % i
+    keys = rooms.keys()
+    print keys[i]
+    print rooms[keys[i]]
+
+
+    # rooms is a dict with format {'key': Room}
+    #rooms[keys[i]].potus = True
+    rooms['Oval Office'].potus = True
     
     print '************ Reprinting Room info ************'
     for key,r in rooms.items():
         r.print_info()
-
 
     begin(char, rooms)
 
@@ -228,6 +239,17 @@ def begin(char, rooms):
 
     '''
 
+
+    str_game_over = '''
+    ******************************************************************
+    ******************************************************************
+    *****************************************************************
+                                GAME OVER
+    ******************************************************************
+    ******************************************************************
+    *****************************************************************
+    '''
+
     # Print the opening message
     #print str_wel
     #print str_intro
@@ -259,16 +281,22 @@ def begin(char, rooms):
     # Build EncounterAction objects
     # char is a Character object passed in
     # Create an enemy
-    print 'Creating Enemy'
-    e = enemy.Enemy(0, 'James McCotter', 10, ['Small talk'], [])
-    enc = encounter.Encounter(char, e)
-    enc.print_intro_str()
-    enc.go()
+    #print 'Creating Enemy'
+    #e = enemy.Enemy(0, 'James McCotter', 10, ['Small talk'], [])
+    #enc = encounter.Encounter(char, e)
+    #enc.print_intro_str()
+    #enc.go()
     
 
+    done = False
 
     # Begin the main loop to play the game
-    while True:
+    while not done:
+
+        if char.room.potus:
+            print str_game_over
+            break
+
 
         # New iteration
         # Print the list of actions and get input
@@ -295,6 +323,26 @@ def begin(char, rooms):
             print 'Enemies:'
             for e in char.room.enemies:
                 e.print_info()
+
+        elif var == 'i' or var == 'I':
+            printing.print_enemies(char.room.enemies)
+            #e = enemy.Enemy(0, 'James McCotter', 10, ['Small talk'], [])
+            #enc = encounter.Encounter(char, e)
+            #enc.print_intro_str()
+            #enc.go()
+            num = input('\n')
+
+            e = char.room.enemies[num]
+            print e
+            print e.name
+
+            enc = encounter.Encounter(char, e)
+            enc.go()
+            if enc.enemy.hp <= 0:
+                char.room.enemies.remove(e)
+            # Else, game over?
+            else:
+                print str_game_over
             
             
         elif var == 'q' or var == 'Q':
