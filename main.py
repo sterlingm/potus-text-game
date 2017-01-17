@@ -10,6 +10,8 @@ import encounter
 import random
 import potus_battle
 
+    
+
 
 def populateRooms(rooms, fnames, lnames, enemy_types_dicts):
     """ Goes through the list of rooms and puts random enemies in each one
@@ -164,6 +166,12 @@ def main():
     populateRooms(rooms, fnames_male, lnames, enemy_types_dict)
     print 'Done populating'
     print len(rooms)
+    enemy_names = []
+    for r in rooms.values():
+        for e in r.enemies:
+            enemy_names.append(e.name)
+    print 'Enemy Names:'
+    print enemy_names
 
     i = random.randint(0,len(rooms))
     print 'i: %i' % i
@@ -180,8 +188,27 @@ def main():
     for key,r in rooms.items():
         r.print_info()
 
-    begin(char, rooms)
 
+    POTUSBattle_test(rooms.values(), enemy_names)
+
+    #begin(char, rooms)
+
+
+def POTUSBattle_test(rooms, enemy_names):
+    # Create random game instance to test POTUSBattle
+    print 'Creating random character'
+    char_random = character.Character.randomChar(rooms, enemy_names)
+    char_random.print_info()
+    for e in char_random.allies:
+        print e
+    print 'Created random character'
+
+    time_left = random.randint(0,25)
+    print 'Random time_left: %i' % time_left
+
+    os.system('reset')
+    p_test = potus_battle.POTUSBattle(char_random, time_left)
+    p_test.battle()
 
 
 
@@ -290,8 +317,9 @@ def begin(char, rooms):
     
 
     # Encounter with President
-    p = potus_battle.POTUSBattle(char)
+    p = potus_battle.POTUSBattle(char, 20)
     p.print_options()
+    p.battle()
     
 
     done = False
