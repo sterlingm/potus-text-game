@@ -1,5 +1,7 @@
 import os
 import random
+import printing
+import time
 
 class POTUSBattle(object):
 
@@ -13,7 +15,6 @@ class POTUSBattle(object):
 
         self.aggressive = self.load_text('aggressive')
         self.calming = self.load_text('calming')
-        self.threaten = self.load_text('threaten')
         self.reason = self.load_text('reason')
         self.bargain = self.load_text('bargain')
     
@@ -30,26 +31,135 @@ class POTUSBattle(object):
         self.potus_aggressive = {}
         self.potus_calm = {}
 
+
+        self.win_threshold = 18
+
         self.init_potus_text()
-        print 'Aggro:'
-        print self.potus_aggressive
-        print 'Calm'
-        print self.potus_calm
+
+        self.last_response = ''
+
+        self.won = False
+
+        self.threaten_attempt_flag = 1
+        self.reason_attempt_flag = 2
+        self.bargain_attempt_flag = 3
+        self.win_attempt = 0
+
+
+        #print 'Aggro:'
+        #print self.potus_aggressive
+        #print 'Calm'
+        #print self.potus_calm
 
         self.str_intro = '''
             You walk into the office and look around. The phone is off the hook.
             The blinds are shut. The President is pacing back and forth on the 
             other side of the room. He's yelling. "Those god damn losers. Think 
             they can beat ME huh?! Think they can grab MY pussy?! I'll go             
-            high-energy all over their  .
+            high-energy all over their asses! 
 
             The secretary comes in. "Sir, uhh, Mr. President, these people-" 
             "Janice! Where's Ivanka? Make sure she's wearing that pussy-guard!" 
-            "Y-yes sir. Sir, these people want to-" "Hang on, I've got something
-            to do first!" The President walks over to his desk and picks up the 
-            phone. "John! Ready the button."
+            "Y-yes sir. Sir, these people want to-" "Hang on!" The President 
+            walks over to his desk and picks up the phone. "John! How much 
+            longer until its ready?"
             
-            "Mr.  President! Stop! You can't press the big red button!"
+            "Mr. President! Stop! You can't press the big red button!"
+
+            The President turns and looks at you with pure disgust, waiting for 
+            you to explain yourself.
+        '''
+
+
+        self.str_explain = '''
+
+        '''
+
+
+        self.str_threaten = '''
+            If you do this, it'll be your last day in office. We'll impeach you. 
+            You'll be tried for war crimes, and we'll help them. Your Presidency 
+            will be over and your legacy will be destroyed. You'll go down in 
+            history as the worst person to ever set foot in this office. Now step 
+            back from the button.
+        '''
+
+        self.str_reason = '''
+            Mr. President, please, think. There MUST be another way. Pressing 
+            the button would change the world forever. Millions of people will 
+            die. The entire world will turn against us. Our nation will be hated
+            forever. This is not how America acts. We have so many resources, so
+            many options, we are smarter than this. Think Mr. President, think!
+        '''
+
+
+        self.str_won_threaten = '''
+            The President stares you in the eye. He sniffs (it's deafening).  
+            
+            He turns towards his desk and he grabs the phone.
+
+            "John, cancel it. We'll find something else."
+
+            He turns back to you. "I'll remember this. Now get the fuck out of 
+            my office.
+        '''
+
+        self.str_lost_threaten = '''
+            The President stares you in the eye. He sniffs (it's deafening). 
+
+            His nostrils flare, and he leans in so close you can feel his 
+            breath.
+
+            "Never...come into my office...and threaten me. I am the President 
+            of the United States. You and your possee are a pack of gnats to 
+            me."
+
+            He walks past you through the door. He nods on his way out, and 
+            three Secret Service men come in and grab you by the arm.
+        '''
+
+        self.str_won_reason = '''
+            The President stares you in the eye. He sniffs (it's deafening).  
+
+            He balks.
+
+            "You're right...what was I thinking? I just...sometimes...something 
+            just comes over me. I let my anger take control. Help me think of 
+            another option, please."
+
+            You sit down. You and the President sit thinking for some time. Then
+            he snaps his fingers and a look of joy comes over his face. 
+
+            "I've got it!"
+
+            You sit up, eager to hear his complex plan that only the President 
+            come concoct.
+
+            "We'll put SANCTIONS on them!"
+        '''
+
+        self.str_lost_reason = '''
+            The President stares you in the eye. He sniffs (it's deafening).  
+
+            He smirks and grabs the phone.
+
+            "Yeah, just 1"
+
+            Three Secret Service come in and grab you by the arm.
+
+            "Get the hell out. ha ha ha, AAA HA HA HA HA HA, AAAAAAAAAAA 
+            HAHAHAHHAHAHAHAHAHAHAHA"
+        '''
+
+        self.str_lost_anger = '''
+            The POTUS has become too angry with you.
+
+            He screams, "Get OUT of my office! NOW! I'm the POTUS, I make this 
+            decision, I'M PRESSING THE BUTTON!"
+
+            Five Secret Service come in and grab you by the arm. You struggle, 
+            but they grab both your ankles and carry you out while you flail and
+            plead with anyone that will listen. But no one does.
         '''
 
 
@@ -70,7 +180,7 @@ class POTUSBattle(object):
     def init_potus_text(self):
         ''' Initializes the dict objects for potus_aggressive and potus_calm
         '''
-        print 'In load_potus_text'
+        #print 'In init_potus_text'
         d = os.path.dirname(__file__)
         d_full_path = os.path.join(d, 'text/potus')
         li = os.listdir(d_full_path)
@@ -94,107 +204,155 @@ class POTUSBattle(object):
     def print_options(self):
         ''' Prints the list of options for the character to choose from.
         '''
-        print 'Your options:'
-
-        print '\tSay something:'
+        print '\n\tSay something:'
         for m in self.mood:
-            print '\t%s/%s: %s' % (m[0].lower(), m[0].upper(), m)
+            print '\t\t%s/%s: %s' % (m[0].lower(), m[0].upper(), m)
 
         print '\n\tAttempt to:'
         for a in self.actions:
-            print '\t%s/%s: %s' % (a[0].lower(), a[0].upper(), a)
+            print '\t\t%s/%s: %s' % (a[0].lower(), a[0].upper(), a)
 
 
     def process_aggressive(self):
         ''' Process an aggressive action against the POTUS. Decreases 
         self.potus_HP
         '''
-        print 'In process_aggressive'
+        #print 'In process_aggressive'
         str_line = random.choice(self.aggressive)
-        print str_line
-        dmg = 5 + len(self.char.allies)
-        print 'dmg: %s' % dmg
-        self.potus_HP -= dmg
+        print '\n\nYou exclaim at the President: %s' % str_line
+        #print str_line
 
     def process_calming(self):
         ''' Process a calming action against the POTUS. Decreases self.potus_HP
         '''
-        print 'In process_calming'
-        str_line = random.choice(self.aggressive)
+        #print 'In process_calming'
+        str_line = random.choice(self.calming)
         print str_line
-        dmg = 5 + (time_left / 2)
-        print 'dmg: %s' % dmg
-        self.potus_HP -= dmg
 
     def process_threaten(self):
         ''' Process a threat action against the POTUS.
+            
+            Return:
+                roll: int value for the final roll 
+                
         '''
-        print 'In process_threaten'
+        #print 'In process_threaten'
 
-        str_line = random.choice(self.threaten)
-        print str_line
+        printing.delay_print(self.str_threaten)
 
-        base_roll = randint(1,20)
+        base_roll = random.randint(5,20)
         allies_mod = len(self.char.allies)
         anger_mod = self.anger / 10.0
         roll = base_roll + allies_mod - anger_mod
         print ('base: %i allies_mod: %i anger: %i anger_mod: %i roll: %i' % 
                 (base_roll, allies_mod, self.anger, anger_mod, roll))
+        return roll
 
     def process_reason(self):
         ''' Process a reason action against the POTUS.
         '''
         print 'In process_reason'
+        printing.delay_print(self.str_reason)
+        
+        base_roll = random.randint(5,20)
+        time_mod = self.time_left / 2
+        anger_mod = self.anger / 10.0
+        roll = base_roll + time_mod - anger_mod
+        print ('base: %i time_mod: %i anger: %i anger_mod: %i roll: %i' % 
+                (base_roll, time_mod, self.anger, anger_mod, roll))
+        return roll
+
+
 
     def process_bargain(self):
         ''' Process a bargain action against the POTUS.
         '''
         print 'In process_bargain'
 
+    def respond(self):
+        ''' Choose a random response from the POTUS and print it
+        '''
+        #print 'In respond'
+        i = random.randint(0,1)
+        if i == 0:
+            response = random.choice(self.potus_calm.keys())
+            self.last_response = self.potus_calm[response]
+        else:
+            response = random.choice(self.potus_aggressive.keys())
+            self.last_response = self.potus_aggressive[response]
+
+        # Print response string
+        print '\nThe President responds: %s' % response
+        
+
 
     def battle(self):
         ''' Executes the main loop of the POTUS encounter.
         '''
-        print 'In battle'
-        print 'Character information:'
-        self.char.print_info()
+        #print 'In battle'
+        #print 'Character information:'
+        #self.char.print_info()
         print self.str_intro
+
+        roll = 0
          
         done = False
         while not done:
             self.print_options()
             
             var = raw_input('\n')
-            print var
 
+            # Statements
             if var == 'a' or var == 'A':
                 self.process_aggressive()
-                self.aggressive_count += 1
+                
+                # Modify anger
+                if self.last_response:
+                    self.anger += self.last_response[0]
 
             elif var == 'c' or var == 'C':
                 self.process_calming()
-                self.calming_count += 1
+               
+                # Modify anger
+                if self.last_response:
+                    self.anger += self.last_response[1]
 
+
+            # End moves
             elif var == 't' or var == 'T':
-                self.process_threaten()
-
-            elif var == 'r' or var == 'R':
-                self.process_reason()
-
-            elif var == 'b' or var == 'B':
-                self.process_bargain()
-
-            print 'POTUS HP: %i' % self.potus_HP
-            if self.potus_HP < 1:
+                roll = self.process_threaten()
+                self.win_attempt = self.threaten_attempt_flag
                 done = True
+            elif var == 'r' or var == 'R':
+                roll = self.process_reason()
+                self.win_attempt = self.reason_attempt_flag
+                done = True
+            
+            # Check if we won 
+            self.won = roll > self.win_threshold
+                
 
+            print '\nPOTUS Anger Level: %i/100' % self.anger
+            if self.anger > 99:
+                print '\nThe POTUS has become too angry with you.'
+                done = True
+        
+            if not done:
+                self.respond()
 
+        # Sleep for a few seconds for suspense
+        #time.sleep(3)
 
-
-
-
-
-
+        if self.won:
+            if self.win_attempt == self.threaten_attempt_flag:
+                printing.delay_print(self.str_won_threaten)
+            elif self.win_attempt == self.reason_attempt_flag:
+                printing.delay_print(self.str_won_reason)
+        else:
+            if self.win_attempt == self.threaten_attempt_flag:
+                printing.delay_print(self.str_lost_threaten)
+            elif self.win_attempt == self.reason_attempt_flag:
+                printing.delay_print(self.str_lost_reason)
 
 
 
