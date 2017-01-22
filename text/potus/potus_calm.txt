@@ -1,3 +1,15 @@
-Okay, well what would you have me do then?|10,-10
+Okay, well what would you have me do?|10,-10
 How do you know about the button?|5,10
 That sounds like something my daughter would say.|15,-5
+They did say some pretty nasty things on Twitter though.|8,-5
+Have you ever heard such terrible things said about the US?|-5,5
+The button though...I've always wantd to press a big red button.|10,-5
+Putin said he would like me more if I press the button.|8,-5
+I have to do this...there's no way Putin will respect after this if I don't press that button.|-5,-10
+You don't know what you're talking about. They said that America loses. I will never let that pass, ever.|5,0
+As President, I took an oath to never let America lose to anyone. I'm just upholding my promise.|5,-5
+I've never worried about the consequences of my actions, so why start now?|5,0
+I mean, it might be a bad idea, but I try not to go back on my actions.|0,-5
+I never thought that I'd have to make decisions like this as President.|-5,-5
+Where's the Vice President? He knows how to explain it better.|2,5
+The main thing is that I don't want to appear weak in front of the world.|-5,-5

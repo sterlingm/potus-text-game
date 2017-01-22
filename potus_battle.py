@@ -56,7 +56,7 @@ class POTUSBattle(object):
             The blinds are shut. The President is pacing back and forth on the 
             other side of the room. He's yelling. "Those god damn losers. Think 
             they can beat ME huh?! Think they can grab MY pussy?! I'll go             
-            high-energy all over their asses! 
+            high-energy all over their asses!" 
 
             The secretary comes in. "Sir, uhh, Mr. President, these people-" 
             "Janice! Where's Ivanka? Make sure she's wearing that pussy-guard!" 
@@ -72,6 +72,26 @@ class POTUSBattle(object):
 
 
         self.str_explain = '''
+            You've found the President! 
+
+            Your goal is to stop him from pressing the button. There are 3 ways 
+            to stop him: 
+
+            Threaten - You can attempt to threaten the President in response to 
+            him pressing the button. The number of allies you have coming into 
+            this will boost your chances of convincing him with a threat.
+
+            Reason - You can plead with the President to find another option.  
+            The time left until the button is ready will boost your chances with
+            this approach.
+
+            Before you attempt one of these, you may want to talk with the 
+            President to calm him down. His anger level will be displayed, and 
+            the angrier he is, the less of a chance he will listen to you.
+
+            Be careful when choosing how to respond! The President is a complex
+            person, and choosing to speak calmly will sometimes make him even 
+            angrier!
 
         '''
 
@@ -101,8 +121,7 @@ class POTUSBattle(object):
             "John, cancel it. We'll find something else."
 
             He turns back to you. "I'll remember this. Now get the fuck out of 
-            my office.
-        '''
+            my office.\n'''
 
         self.str_lost_threaten = '''
             The President stares you in the eye. He sniffs (it's deafening). 
@@ -115,8 +134,7 @@ class POTUSBattle(object):
             me."
 
             He walks past you through the door. He nods on his way out, and 
-            three Secret Service men come in and grab you by the arm.
-        '''
+            three Secret Service men come in and grab you by the arm.\n'''
 
         self.str_won_reason = '''
             The President stares you in the eye. He sniffs (it's deafening).  
@@ -135,8 +153,7 @@ class POTUSBattle(object):
             You sit up, eager to hear his complex plan that only the President 
             come concoct.
 
-            "We'll put SANCTIONS on them!"
-        '''
+            "We'll put SANCTIONS on them!"\n'''
 
         self.str_lost_reason = '''
             The President stares you in the eye. He sniffs (it's deafening).  
@@ -148,8 +165,7 @@ class POTUSBattle(object):
             Three Secret Service come in and grab you by the arm.
 
             "Get the hell out. ha ha ha, AAA HA HA HA HA HA, AAAAAAAAAAA 
-            HAHAHAHHAHAHAHAHAHAHAHA"
-        '''
+            HAHAHAHHAHAHAHAHAHAHAHA"\n'''
 
         self.str_lost_anger = '''
             The POTUS has become too angry with you.
@@ -159,8 +175,9 @@ class POTUSBattle(object):
 
             Five Secret Service come in and grab you by the arm. You struggle, 
             but they grab both your ankles and carry you out while you flail and
-            plead with anyone that will listen. But no one does.
-        '''
+            plead with anyone that will listen. But no one does.\n'''
+
+
 
 
     def load_text(self, category):
@@ -219,7 +236,7 @@ class POTUSBattle(object):
         '''
         #print 'In process_aggressive'
         str_line = random.choice(self.aggressive)
-        print '\n\nYou exclaim at the President: %s' % str_line
+        print '\n\nYou: %s' % str_line
         #print str_line
 
     def process_calming(self):
@@ -251,7 +268,7 @@ class POTUSBattle(object):
     def process_reason(self):
         ''' Process a reason action against the POTUS.
         '''
-        print 'In process_reason'
+        #print 'In process_reason'
         printing.delay_print(self.str_reason)
         
         base_roll = random.randint(5,20)
@@ -282,7 +299,7 @@ class POTUSBattle(object):
             self.last_response = self.potus_aggressive[response]
 
         # Print response string
-        print '\nThe President responds: %s' % response
+        print 'President: %s' % response
         
 
 
@@ -292,13 +309,19 @@ class POTUSBattle(object):
         #print 'In battle'
         #print 'Character information:'
         #self.char.print_info()
-        print self.str_intro
+        print self.str_explain
+        print 'Press Enter to begin the encounter!'
+
+        var = raw_input('\n')
+
+        printing.delay_print(self.str_intro)
 
         roll = 0
          
         done = False
         while not done:
             self.print_options()
+            print '\nPOTUS Anger Level: %i/100' % self.anger
             
             var = raw_input('\n')
 
@@ -332,9 +355,8 @@ class POTUSBattle(object):
             self.won = roll > self.win_threshold
                 
 
-            print '\nPOTUS Anger Level: %i/100' % self.anger
             if self.anger > 99:
-                print '\nThe POTUS has become too angry with you.'
+                printing.delay_print(self.str_lost_anger)
                 done = True
         
             if not done:
@@ -353,6 +375,7 @@ class POTUSBattle(object):
                 printing.delay_print(self.str_lost_threaten)
             elif self.win_attempt == self.reason_attempt_flag:
                 printing.delay_print(self.str_lost_reason)
+
 
 
 
