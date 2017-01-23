@@ -13,21 +13,23 @@ class POTUSBattle(object):
         self.actions = ['Threaten', 'Reason', 'Bargain']
         self.time_left = time_left
 
-        self.aggressive = self.load_text('aggressive')
-        self.calming = self.load_text('calming')
+        self.aggressive_full = self.load_text('aggressive')
+        self.calming_full = self.load_text('calming')
         self.reason = self.load_text('reason')
         self.bargain = self.load_text('bargain')
-    
-        self.aggressive_count = 0
-        self.calming_count = 0
 
-        self.anger = random.randint(50,90)
+        self.aggressive = self.aggressive_full[:]
+        self.calm = self.calming_full[:]
+        
+        self.anger = random.randint(65,90)
 
         # potus_aggressive and potus_calm are dict object.
         # with format {'string': [int,int]} where the string object
         # is the phrase the potus says, and the list is the int to
         # modify self.anger by, the first element is if the player responds
         # aggressively and the 2nd element is if the player responds calmly
+        self.potus_aggressive_full = {}
+        self.potus_calm_full = {}
         self.potus_aggressive = {}
         self.potus_calm = {}
 
@@ -210,11 +212,12 @@ class POTUSBattle(object):
                     mods = strs[1].split(',')
                     mods = map(int, mods)
                     if filename == 'potus_aggressive.txt':
-                        self.potus_aggressive[strs[0]] = mods
+                        self.potus_aggressive_full[strs[0]] = mods
                     else:
-                        self.potus_calm[strs[0]] = mods
+                        self.potus_calm_full[strs[0]] = mods
 
-        
+        self.potus_aggressive = self.potus_aggressive_full.copy()
+        self.potus_calm = self.potus_calm_full.copy()
 
 
 
@@ -234,17 +237,27 @@ class POTUSBattle(object):
         ''' Process an aggressive action against the POTUS. Decreases 
         self.potus_HP
         '''
-        #print 'In process_aggressive'
+        print 'In process_aggressive'
         str_line = random.choice(self.aggressive)
+
+        self.aggressive.remove(str_line)
+
+        if len(self.aggressive) < 1:
+            self.aggressive = self.aggressive_full[:]
+
         print '\n\nYou: %s' % str_line
-        #print str_line
 
     def process_calming(self):
         ''' Process a calming action against the POTUS. Decreases self.potus_HP
         '''
         #print 'In process_calming'
-        str_line = random.choice(self.calming)
-        print str_line
+        str_line = random.choice(self.calm)
+
+        self.calm.remove(str_line)
+        if len(self.calm) < 1:
+            self.calm = self.calming_full[:]
+
+        print '\n\nYou: %s' % str_line
 
     def process_threaten(self):
         ''' Process a threat action against the POTUS.
@@ -258,8 +271,8 @@ class POTUSBattle(object):
         printing.delay_print(self.str_threaten)
 
         base_roll = random.randint(5,20)
-        allies_mod = len(self.char.allies)
-        anger_mod = self.anger / 10.0
+        allies_mod = len(self.char.allies)*1.5
+        anger_mod = self.anger / 20.0
         roll = base_roll + allies_mod - anger_mod
         print ('base: %i allies_mod: %i anger: %i anger_mod: %i roll: %i' % 
                 (base_roll, allies_mod, self.anger, anger_mod, roll))
@@ -273,7 +286,7 @@ class POTUSBattle(object):
         
         base_roll = random.randint(5,20)
         time_mod = self.time_left / 2
-        anger_mod = self.anger / 10.0
+        anger_mod = self.anger / 20.0
         roll = base_roll + time_mod - anger_mod
         print ('base: %i time_mod: %i anger: %i anger_mod: %i roll: %i' % 
                 (base_roll, time_mod, self.anger, anger_mod, roll))
@@ -294,9 +307,17 @@ class POTUSBattle(object):
         if i == 0:
             response = random.choice(self.potus_calm.keys())
             self.last_response = self.potus_calm[response]
+
+            del self.potus_calm[response]
+            if len(self.potus_calm) < 1:
+                self.potus_calm = self.potus_calm_full.copy()
         else:
             response = random.choice(self.potus_aggressive.keys())
             self.last_response = self.potus_aggressive[response]
+
+            del self.potus_aggressive[response]
+            if len(self.potus_aggressive) < 1:
+                self.potus_aggressive = self.potus_aggressive_full.copy()
 
         # Print response string
         print 'President: %s' % response
@@ -314,7 +335,7 @@ class POTUSBattle(object):
 
         var = raw_input('\n')
 
-        printing.delay_print(self.str_intro)
+        #printing.delay_print(self.str_intro)
 
         roll = 0
          
@@ -327,14 +348,14 @@ class POTUSBattle(object):
 
             # Statements
             if var == 'a' or var == 'A':
-                self.process_aggressive()
+                #self.process_aggressive()
                 
                 # Modify anger
                 if self.last_response:
                     self.anger += self.last_response[0]
 
             elif var == 'c' or var == 'C':
-                self.process_calming()
+                #self.process_calming()
                
                 # Modify anger
                 if self.last_response:
@@ -370,12 +391,15 @@ class POTUSBattle(object):
                 printing.delay_print(self.str_won_threaten)
             elif self.win_attempt == self.reason_attempt_flag:
                 printing.delay_print(self.str_won_reason)
+            
+            print '\n\nEVERYBODY LIVES\nGREAT JOB\n\n'
         else:
             if self.win_attempt == self.threaten_attempt_flag:
                 printing.delay_print(self.str_lost_threaten)
             elif self.win_attempt == self.reason_attempt_flag:
                 printing.delay_print(self.str_lost_reason)
 
+            print '\n\nYOU BLEW IT\nEVERYBODY DIES\n\n'
 
 
 

@@ -8,8 +8,8 @@ Putin said he would like me more if I press the button.|8,-5
 I have to do this...there's no way Putin will respect after this if I don't press that button.|-5,-10
 You don't know what you're talking about. They said that America loses. I will never let that pass, ever.|5,0
 As President, I took an oath to never let America lose to anyone. I'm just upholding my promise.|5,-5
-I've never worried about the consequences of my actions, so why start now?|5,0
-I mean, it might be a bad idea, but I try not to go back on my actions.|0,-5
+I've never worried about the consequences of my actions, so why start now?|5,5
+I mean, it might be a bad idea, but I try not to go back on my actions.|5,-5
 I never thought that I'd have to make decisions like this as President.|-5,-5
 Where's the Vice President? He knows how to explain it better.|2,5
 The main thing is that I don't want to appear weak in front of the world.|-5,-5
