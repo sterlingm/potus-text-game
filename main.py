@@ -13,7 +13,7 @@ import potus_battle
     
 
 
-def populateRooms(rooms, fnames, lnames, enemy_types_dicts):
+def populateRooms(rooms, fnames, lnames, states, facts, enemy_types_dicts):
     """ Goes through the list of rooms and puts random enemies in each one
 
     Args:
@@ -30,7 +30,7 @@ def populateRooms(rooms, fnames, lnames, enemy_types_dicts):
             # TODO: Find better way to get list of types
             t = random.choice(enemy_types_dicts)
             print 'Type: %s' % t
-            e = createEnemy(fnames, lnames, t)
+            e = createEnemy(fnames, lnames, t, states, facts)
             e.print_info()
             r.enemies.append(e)
 
@@ -65,7 +65,7 @@ def get_enemy_info_dicts(direc):
         result.append(enemy_info)
     return result
 
-def createEnemy(fnames, lnames, t):
+def createEnemy(fnames, lnames, t, states, facts):
     """ Create an instance of the Enemy class.
 
     Args:
@@ -82,8 +82,11 @@ def createEnemy(fnames, lnames, t):
     print fname
     print lname
 
-    e = enemy.Enemy(t['Type'], fname + " " + lname, t['HP'], t['Weakness'], 
-            t['Strength'])
+    state = random.choice(states)
+    fact = random.choice(facts)
+
+    e = enemy.Enemy(t['Type'], fname + " " + lname, state, fact, t['HP'], 
+            t['Weakness'], t['Strength'])
     return e
 
     
@@ -152,18 +155,29 @@ def main():
     print fnames_female
     print lnames
 
+    states_filename = os.path.join(d, 'states.txt')
+    print states_filename
+    states = open(states_filename).read().split('\n')
+    print 'After getting states'
+    facts = open('./facts.txt').read().split('\n')
+    print 'After getting facts'
+    states.remove('')
+    facts.remove('')
+    print states
+    print facts
+
+
     print '******Enemy Types*******'
     print enemy_types_dict
-    e = createEnemy(fnames_male, lnames, enemy_types_dict[0])
+    e = createEnemy(fnames_male, lnames, enemy_types_dict[0], states, facts)
     print e
     e.print_info()
     print 'Rooms'
     rooms['Entrance'].add_enemy(e)
     rooms['Entrance'].print_info()
 
-    
     # Can create Enemies, Now create list of random enemies for each room
-    populateRooms(rooms, fnames_male, lnames, enemy_types_dict)
+    populateRooms(rooms, fnames_male, lnames, states, facts, enemy_types_dict)
     print 'Done populating'
     print len(rooms)
     enemy_names = []
@@ -189,9 +203,9 @@ def main():
         r.print_info()
 
 
-    POTUSBattle_test(rooms.values(), enemy_names)
+    #POTUSBattle_test(rooms.values(), enemy_names)
 
-    #begin(char, rooms)
+    begin(char, rooms)
 
 
 def POTUSBattle_test(rooms, enemy_names):
@@ -316,19 +330,15 @@ def begin(char, rooms):
     #enc.go()
     
 
-    # Encounter with President
-    p = potus_battle.POTUSBattle(char, 20)
-    p.print_options()
-    p.battle()
-    
-
+    reached_potus = False
     done = False
 
     # Begin the main loop to play the game
     while not done:
 
-        if char.room.potus:
+        if char.room.name == 'Oval Office':
             print str_game_over
+            reached_potus = True
             break
 
 
@@ -367,8 +377,6 @@ def begin(char, rooms):
             num = input('\n')
 
             e = char.room.enemies[num]
-            print e
-            print e.name
 
             enc = encounter.Encounter(char, e)
             enc.go()
@@ -387,6 +395,14 @@ def begin(char, rooms):
         char.print_info()
         print("\n*********************************************")
 
+
+    # Encounter with President
+    if reached_potus:
+        p = potus_battle.POTUSBattle(char, 20)
+        p.print_options()
+        p.battle()
+    
+    print 'Game over'
 
 
         

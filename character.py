@@ -17,10 +17,15 @@ class Character(object):
         self.actions = ['Move','Interact','Look Around','Quit Game']
 
         # The keys map to the base damage of the action
-        self.combat_actions = {'Small talk': 3, 'Ask': 2, 'Ignore': 2}
+        self.combat_actions = {'Small talk': 3, 'Ask': 3}
 
         # List of allies the character has recruited
         self.allies = []
+
+        #self.dmg_bonus = 2
+
+        # True for small talk
+        self.combat_move = False 
 
     @classmethod
     def randomChar(cls, room_list, enemies_list):

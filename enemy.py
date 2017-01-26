@@ -1,14 +1,20 @@
 
 class Enemy(object):
 
-    def __init__(self, t, name, hp, weak, strong):
+    def __init__(self, t, name, state, fact, hp, weak, strong):
         print 'In Enemy.init'
         self.enemy_type = t
         self.name = name
         self.hp = hp
         self.weakness = weak
         self.strength = strong
+
+        self.state = state
+        self.fact = fact
         print 'Leaving Enemy.init'
+
+    def print_fact(self):
+        print self.fact % self.name
 
 
     def take_action(self, action, base_damage):
@@ -25,9 +31,9 @@ class Enemy(object):
         total_dmg = base_damage 
 
         if action in self.weakness:
-            total_dmg = total_dmg + 3
+            total_dmg = total_dmg + 2
         elif action in self.strength:
-            total_dmg = total_dmg - 3
+            total_dmg = total_dmg - 2
 
         if total_dmg < 0:
             total_dmg = 0

@@ -10,13 +10,12 @@ class POTUSBattle(object):
         self.potus_HP = 30
         self.char_hp = 10
         self.mood = ['Aggressive', 'Calming']
-        self.actions = ['Threaten', 'Reason', 'Bargain']
+        self.actions = ['Threaten', 'Reason']
         self.time_left = time_left
 
         self.aggressive_full = self.load_text('aggressive')
         self.calming_full = self.load_text('calming')
         self.reason = self.load_text('reason')
-        self.bargain = self.load_text('bargain')
 
         self.aggressive = self.aggressive_full[:]
         self.calm = self.calming_full[:]
@@ -34,7 +33,7 @@ class POTUSBattle(object):
         self.potus_calm = {}
 
 
-        self.win_threshold = 18
+        self.win_threshold = 16
 
         self.init_potus_text()
 
@@ -44,7 +43,6 @@ class POTUSBattle(object):
 
         self.threaten_attempt_flag = 1
         self.reason_attempt_flag = 2
-        self.bargain_attempt_flag = 3
         self.win_attempt = 0
 
 
@@ -294,10 +292,6 @@ class POTUSBattle(object):
 
 
 
-    def process_bargain(self):
-        ''' Process a bargain action against the POTUS.
-        '''
-        print 'In process_bargain'
 
     def respond(self):
         ''' Choose a random response from the POTUS and print it
@@ -335,7 +329,7 @@ class POTUSBattle(object):
 
         var = raw_input('\n')
 
-        #printing.delay_print(self.str_intro)
+        printing.delay_print(self.str_intro)
 
         roll = 0
          
