@@ -11,7 +11,7 @@ import random
 import potus_battle
 
     
-
+time_left = 30
 
 def populateRooms(rooms, fnames, lnames, states, facts, enemy_types_dicts):
     """ Goes through the list of rooms and puts random enemies in each one
@@ -23,7 +23,7 @@ def populateRooms(rooms, fnames, lnames, states, facts, enemy_types_dicts):
     
     for key, r in rooms.items():
         print 'Room %s' % r.name
-        num_enemies = random.randint(1,3)
+        num_enemies = random.randint(0,2)
         print 'Number of enemies: %i' % num_enemies
         for i in range(num_enemies):
             # Randomly select type
@@ -225,6 +225,12 @@ def POTUSBattle_test(rooms, enemy_names):
     p_test.battle()
 
 
+def print_game_state(char):
+    print("\n*********************************************")
+    char.print_info()
+    print '\tTime left: %d' % time_left
+    print("\n*********************************************")
+
 
 def begin(char, rooms):
     os.system('reset')
@@ -250,18 +256,32 @@ def begin(char, rooms):
     '''
 
     str_rules = '''
-    Each room you enter may contain several employees. An employee may have 
-    useful information for you, such as rumors or clues about the President's 
-    location, or they could have no information. They could also want to talk to
-    you and figure out what you're up to. Most employees will have certain 
-    strengths and weaknesses to the various interactions you can make with them,
-    such as small talk.
+    Each room you enter may contain several employees. You may choose to 
+    interact with these people, or they may interact with you. The point of 
+    interacting with people is to make them your ally. If you want to really 
+    hardball the President, it helps to have people in your corner. However, the
+    clock is ticking so you don't want to interact with everyone.
+    
+    When you interact with these people, you will have two options: "Small talk" 
+    or "Ask". Small talk will ask the person about the weather or about some 
+    other thing nobody cares about. "Ask" will prompt you to ask the person 
+    about what's going on with the current China-Muslim-Mexican conflict, or 
+    something else that might press people to talk about policy.
+    
+    The goal is to end the interaction (you've got something to do, remember?).  
+    Most types of employees will be strong or weak against a type of action. For 
+    example, members of Congress like to seem friendly, but they hate being 
+    asked hard questions. If you encounter one, don't even think about trying to
+    "Small talk" them, that's their livelihood. "Ask" them something about 
+    policy though? They'll be flying away.
+
+    After an encounter, you can try to make the employee one of your allies.
 
     Interacting with an employee takes time so make sure you don't get caught up
-    talking to 1 employee for too long! Do your best to get information from the
-    useful employees, and get past the useless ones as fast as possible!
-
+    talking to 1 employee for too long! Do your best to end the encounter, make 
+    an ally, and keep moving towards the President! The clock is ticking!
     '''
+
     str_story = '''
     Today, a phone call from the China-Mexico-Muslim Alliance was received.  
     According to your sources, the Alliance wanted to ensure that the President 
@@ -341,6 +361,8 @@ def begin(char, rooms):
             reached_potus = True
             break
 
+        # Print "You are now in ..."
+        printing.print_room_status(char.room)
 
         # New iteration
         # Print the list of actions and get input
@@ -363,17 +385,12 @@ def begin(char, rooms):
             # and always print the description first
             # **************************************************
 
-            # Then, print the enemies seen in the room:
-            print 'Enemies:'
-            for e in char.room.enemies:
-                e.print_info()
+            # Print Room info
+            print_game_state(char)
+
 
         elif var == 'i' or var == 'I':
             printing.print_enemies(char.room.enemies)
-            #e = enemy.Enemy(0, 'James McCotter', 10, ['Small talk'], [])
-            #enc = encounter.Encounter(char, e)
-            #enc.print_intro_str()
-            #enc.go()
             num = input('\n')
 
             e = char.room.enemies[num]
@@ -390,10 +407,7 @@ def begin(char, rooms):
         elif var == 'q' or var == 'Q':
             break
         
-        # Print character info
-        print("\n***************Character Status**************")
-        char.print_info()
-        print("\n*********************************************")
+        print_game_state(char)
 
 
     # Encounter with President

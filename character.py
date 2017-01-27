@@ -57,8 +57,7 @@ class Character(object):
     def print_info(self):
         str_info = "\n\tName: %s\n\tRoom: %s" % (self.name, self.room.name)
         print str_info
-        print 'List of allies:'
-        print self.allies
+        print '\tList of allies: %s' % self.allies
 
     def switch_room(self, room):
         """ Sets the Character's room attribute

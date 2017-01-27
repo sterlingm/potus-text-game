@@ -72,8 +72,26 @@ def print_locs(str_locs):
 
 
 def print_enemies(enemies):
-    print("\n\nEnter an index for a connecting room:")
+    print("\n\nEnter an index for an enemy to encounter:")
     for i, e in enumerate(enemies):
         print "%i: %s" % (i, e.name)
+
+
+def print_room_status(room):
+    ''' Prints out the room, its connections, and the enemies in it.
+    Args:
+        room: Room object
+    '''
+    enemy_names = []
+    for e in room.enemies:
+        enemy_names.append(e.name)
+
+    print '\nYou are in the %s room' % room.name
+    print 'People in this room are: %s' % ', '.join(enemy_names)
+    print 'Connecting rooms are: %s' % ', '.join(room.connections)
+
+    
+
+
 
 
