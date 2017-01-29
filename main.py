@@ -9,6 +9,7 @@ import enemy
 import encounter
 import random
 import potus_battle
+import copy
 
     
 time_left = 30
@@ -33,6 +34,72 @@ def populateRooms(rooms, fnames, lnames, states, facts, enemy_types_dicts):
             e = createEnemy(fnames, lnames, t, states, facts)
             e.print_info()
             r.enemies.append(e)
+
+def process_encounter(char, enemy, small_talk_lines, ask_lines):
+    ''' Does an encounter with an enemy
+
+    Args:
+        char: Character instance
+        enemy: Enemy instance
+    '''
+    #print 'In process_encounter'
+
+    enc = encounter.Encounter(char, enemy, small_talk_lines, ask_lines)
+    enc.go()
+
+    # Check if enemy is dead
+    if enc.enemy.hp <=0:
+        char.room.enemies.remove(enemy)
+
+
+
+def process_move(char, rooms_dict, small_talk_lines, ask_lines):
+    ''' Moves the character to room r, and checks if any enemies will interact 
+    with character on the way.
+
+    Args:
+        char: Character instance
+        rooms_dict: dict with format ['room name': Room instance]
+    Return:
+        char: Updated Character instance
+    '''
+
+    char_def = 12
+
+    
+    # List all rooms to move to and get an index
+    printing.print_locs(char.room.connections)
+    num = input("\n")
+
+    #all_enemies = copy.deepcopy(char.room.enemies)
+
+    i = 0
+    while i < len(char.room.enemies):
+        # do stuff
+        e = char.room.enemies[i]
+
+        # Roll 1d20
+        roll = random.randint(0,20)
+        
+        # If enemy loves small talk, they get a huge bonus
+        if e.strength == 'Small talk':
+            roll += 10
+
+        # Check if the roll was high enough
+        if roll > char_def:
+            # Start encounter
+            print '\nUh-oh, %s wants to talk to you!' % e.name
+            process_encounter(char, e, small_talk_lines, ask_lines)
+            i-=1
+
+        i+=1
+
+    # Check if any enemies will interact with the character
+
+    # Switch the Character's room
+    char.switch_room(rooms_dict[ char.room.connections[num] ])
+
+    return char
 
 
 
@@ -90,7 +157,26 @@ def createEnemy(fnames, lnames, t, states, facts):
     return e
 
     
+def get_text_encounters():
+    d = os.path.dirname(__file__)
+    print 'd: %s' % d
+    d_full_text = os.path.join(d, 'text')
+    print 'd_full_text: %s' % d_full_path
+    fname_small = d_full_text.path.join(d_full_text, 'small_talk.txt')
+    print fname_small
+    fname_ask = d_full_text.path.join(d_full_text, 'ask.txt')
+    print fname_ask
 
+    small_talk_lines = open(fname_small).read().split('\n')
+    ask_lines = open(fname_ask).read().split('\n')
+
+    if '' in small_talk_lines:
+        small_talk_lines.remove('')
+    if '' in ask_lines:
+        ask_lines.remove('')
+
+    print small_talk_lines
+    print ask_lines
 
 
 def createRoomsFromDir(direc):
@@ -155,6 +241,27 @@ def main():
     print fnames_female
     print lnames
 
+
+    print 'd: %s' % d
+    d_text = os.path.join(d, 'text')
+    print 'd_text: %s' % d_text
+    fname_small = os.path.join(d_text, 'small_talk.txt')
+    print fname_small
+    fname_ask = os.path.join(d_text, 'ask.txt')
+    print fname_ask
+
+    small_talk_lines = open(fname_small).read().split('\n')
+    ask_lines = open(fname_ask).read().split('\n')
+
+    if '' in small_talk_lines:
+        small_talk_lines.remove('')
+    if '' in ask_lines:
+        ask_lines.remove('')
+
+    print small_talk_lines
+    print ask_lines
+
+
     states_filename = os.path.join(d, 'states.txt')
     print states_filename
     states = open(states_filename).read().split('\n')
@@ -187,7 +294,7 @@ def main():
     print 'Enemy Names:'
     print enemy_names
 
-    i = random.randint(0,len(rooms))
+    i = random.randint(0,len(rooms)-1)
     print 'i: %i' % i
     keys = rooms.keys()
     print keys[i]
@@ -205,7 +312,16 @@ def main():
 
     #POTUSBattle_test(rooms.values(), enemy_names)
 
-    begin(char, rooms)
+    # **********************************************************
+    # **********************************************************
+    # **********************************************************
+    # BEGIN THE MAIN GAME LOOP
+    begin(char, rooms, small_talk_lines, ask_lines)
+    # **********************************************************
+    # **********************************************************
+    # **********************************************************
+    # **********************************************************
+
 
 
 def POTUSBattle_test(rooms, enemy_names):
@@ -232,7 +348,14 @@ def print_game_state(char):
     print("\n*********************************************")
 
 
-def begin(char, rooms):
+def begin(char, rooms, small_talk_lines, ask_lines):
+    ''' Runs the main game loop
+
+    Args:
+        char: Character instance
+        rooms: dict of rooms in form ['name of room': Room instance]
+    '''
+
     os.system('reset')
     str_wel = "\nWelcome %s!" % char.name
     str_intro = '''
@@ -357,7 +480,6 @@ def begin(char, rooms):
     while not done:
 
         if char.room.name == 'Oval Office':
-            print str_game_over
             reached_potus = True
             break
 
@@ -371,13 +493,15 @@ def begin(char, rooms):
 
         if var == 'm' or var == 'M':
 
+            char = process_move(char, rooms, small_talk_lines, ask_lines)
+
             # List all rooms to move to
-            printing.print_locs(char.room.connections)
-            num = input("\n")
+            #printing.print_locs(char.room.connections)
+            #num = input("\n")
             
             # Get the room and call switch_room
-            r = rooms[char.room.connections[num]]
-            char.switch_room(rooms[ char.room.connections[num] ])
+            #r = rooms[char.room.connections[num]]
+            #char.switch_room(rooms[ char.room.connections[num] ])
 
         elif var == 'l' or var == 'L':
             # **************************************************
@@ -395,14 +519,7 @@ def begin(char, rooms):
 
             e = char.room.enemies[num]
 
-            enc = encounter.Encounter(char, e)
-            enc.go()
-            if enc.enemy.hp <= 0:
-                char.room.enemies.remove(e)
-            # Else, game over?
-            else:
-                print str_game_over
-            
+            process_encounter(char, e, small_talk_lines, ask_lines)
             
         elif var == 'q' or var == 'Q':
             break
@@ -413,7 +530,6 @@ def begin(char, rooms):
     # Encounter with President
     if reached_potus:
         p = potus_battle.POTUSBattle(char, 20)
-        p.print_options()
         p.battle()
     
     print 'Game over'

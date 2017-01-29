@@ -24,9 +24,9 @@ class Enemy(object):
             action: string key for the action
             base_damage: int for the base damage to take
         """
-        print 'In Enemy.take_action'
-        print action
-        print base_damage
+        #print 'In Enemy.take_action'
+        #print action
+        #print base_damage
 
         total_dmg = base_damage 
 
@@ -38,11 +38,13 @@ class Enemy(object):
         if total_dmg < 0:
             total_dmg = 0
         
+        print 'Damage: %i' % total_dmg
         self.hp = self.hp - total_dmg
 
 
     def print_info(self):
-        print 'Enemy Name: %s' % self.name
+        print '\nEnemy Name: %s' % self.name
+        print 'Enemy Type: %s' % self.enemy_type
         print 'Enemy HP: %i' % self.hp
 
 
