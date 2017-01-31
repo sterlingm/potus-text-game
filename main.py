@@ -11,8 +11,6 @@ import random
 import potus_battle
 import copy
 
-    
-time_left = 30
 
 def populateRooms(rooms, fnames, lnames, states, facts, enemy_types_dicts):
     """ Goes through the list of rooms and puts random enemies in each one
@@ -41,6 +39,8 @@ def process_encounter(char, enemy, small_talk_lines, ask_lines):
     Args:
         char: Character instance
         enemy: Enemy instance
+    Return:
+        elapsed_time: How much time to reduce from time_left
     '''
     #print 'In process_encounter'
 
@@ -50,6 +50,8 @@ def process_encounter(char, enemy, small_talk_lines, ask_lines):
     # Check if enemy is dead
     if enc.enemy.hp <=0:
         char.room.enemies.remove(enemy)
+
+    return enc.time_dec
 
 
 
@@ -71,7 +73,7 @@ def process_move(char, rooms_dict, small_talk_lines, ask_lines):
     printing.print_locs(char.room.connections)
     num = input("\n")
 
-    #all_enemies = copy.deepcopy(char.room.enemies)
+    time_dec = char.room.time_dec
 
     i = 0
     while i < len(char.room.enemies):
@@ -94,12 +96,10 @@ def process_move(char, rooms_dict, small_talk_lines, ask_lines):
 
         i+=1
 
-    # Check if any enemies will interact with the character
-
     # Switch the Character's room
     char.switch_room(rooms_dict[ char.room.connections[num] ])
 
-    return char
+    return [char, time_dec]
 
 
 
@@ -198,7 +198,8 @@ def createRoom(filename):
     #print('In createRoom, filename: %s' % filename)
     
     lines = open(filename).read().split('\n')
-    r = room.Room(lines[0])
+    print lines
+    r = room.Room(lines[0], int(lines[2]))
     s = lines[1].split(',')
     r.add_connectors(s)
 
@@ -341,7 +342,7 @@ def POTUSBattle_test(rooms, enemy_names):
     p_test.battle()
 
 
-def print_game_state(char):
+def print_game_state(char, time_left):
     print("\n*********************************************")
     char.print_info()
     print '\tTime left: %d' % time_left
@@ -473,11 +474,13 @@ def begin(char, rooms, small_talk_lines, ask_lines):
     #enc.go()
     
 
+    time_left = 30
     reached_potus = False
     done = False
 
     # Begin the main loop to play the game
     while not done:
+
 
         if char.room.name == 'Oval Office':
             reached_potus = True
@@ -493,15 +496,9 @@ def begin(char, rooms, small_talk_lines, ask_lines):
 
         if var == 'm' or var == 'M':
 
-            char = process_move(char, rooms, small_talk_lines, ask_lines)
+            [char, td] = process_move(char, rooms, small_talk_lines, ask_lines)
+            time_left -= td
 
-            # List all rooms to move to
-            #printing.print_locs(char.room.connections)
-            #num = input("\n")
-            
-            # Get the room and call switch_room
-            #r = rooms[char.room.connections[num]]
-            #char.switch_room(rooms[ char.room.connections[num] ])
 
         elif var == 'l' or var == 'L':
             # **************************************************
@@ -510,7 +507,7 @@ def begin(char, rooms, small_talk_lines, ask_lines):
             # **************************************************
 
             # Print Room info
-            print_game_state(char)
+            print_game_state(char, time_left)
 
 
         elif var == 'i' or var == 'I':
@@ -519,12 +516,18 @@ def begin(char, rooms, small_talk_lines, ask_lines):
 
             e = char.room.enemies[num]
 
-            process_encounter(char, e, small_talk_lines, ask_lines)
+            elapsed_time = process_encounter(char, e, small_talk_lines, 
+                    ask_lines)
+
+            print 'elapsed_time: %i' % elapsed_time
+            time_left -= elapsed_time
+            print 'time_left: %i' % time_left
+
             
         elif var == 'q' or var == 'Q':
             break
         
-        print_game_state(char)
+        print_game_state(char, time_left)
 
 
     # Encounter with President

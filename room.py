@@ -2,11 +2,12 @@
 
 class Room(object):
 
-    def __init__(self, name):
+    def __init__(self, name, time):
         self.name = name
         self.connections = []
         self.enemies = []
         self.potus = False
+        self.time_dec = time
 
 
     # Connections are stored as strings of the room names
@@ -35,4 +36,4 @@ class Room(object):
         print 'Enemies:'
         for e in self.enemies:
             e.print_info()
-        print 'POTUS: %r' % self.potus
+        print 'Time decrement: %i' % self.time_dec
