@@ -1,3 +1,4 @@
+import printing
 
 class Enemy(object):
 
@@ -38,7 +39,8 @@ class Enemy(object):
         if total_dmg < 0:
             total_dmg = 0
         
-        print 'Damage: %i' % total_dmg
+        s = 'Damage: %i' % total_dmg
+        printing.print_blue(s)
         self.hp = self.hp - total_dmg
 
 

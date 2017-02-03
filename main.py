@@ -519,9 +519,10 @@ def begin(char, rooms, small_talk_lines, ask_lines):
             elapsed_time = process_encounter(char, e, small_talk_lines, 
                     ask_lines)
 
-            print 'elapsed_time: %i' % elapsed_time
+            s = '\nElapsed time during encounter: %i minutes\nTime left: %i' % \
+            (elapsed_time, time_left)
+            printing.print_red(s)
             time_left -= elapsed_time
-            print 'time_left: %i' % time_left
 
             
         elif var == 'q' or var == 'Q':

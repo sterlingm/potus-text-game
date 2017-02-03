@@ -82,7 +82,8 @@ the correct decision, and why the other side is dead wrong.''']
         line = random.sample(self.small_talk, 1)[0] if action == 'Small talk' \
                 else random.sample(self.ask,1)[0]
 
-        print '\nYou: "%s"' % line
+        s = '\nYou: %s' % line
+        printing.print_bold_red(s)
 
         if len(self.small_talk) == 0:
             self.small_talk = copy.deepcopy(self.small_talk_full)
@@ -90,7 +91,9 @@ the correct decision, and why the other side is dead wrong.''']
             self.ask = copy.deepcopy(self.ask_full)
 
     def print_enemy_response(self, str_chosen_action):
-        print '\n---Enemy Response---\n'
+        s = '---Enemy Response---'
+        printing.print_bold_red(s)
+
         response_list = self.enemy_resp_st_weak
 
         # Set the correct response list to choose from
@@ -108,7 +111,8 @@ the correct decision, and why the other side is dead wrong.''']
 
         # Choose from the response list and print the response 
         l = random.choice(response_list)
-        print l % self.enemy.name
+        s = l % self.enemy.name
+        printing.print_bold_red(s)
 
 
     def go(self):
@@ -130,7 +134,8 @@ the correct decision, and why the other side is dead wrong.''']
             elif str_chosen_action == 'a' or str_chosen_action == 'A':
                 str_chosen_action = 'Ask'
             else:
-                print '******* Incorrect Input ********'
+                s = '******* Incorrect Input ********'
+                print s
                 continue
 
 
@@ -147,13 +152,8 @@ the correct decision, and why the other side is dead wrong.''']
             if str_chosen_action in self.enemy.strength:
                 self.strong_against_counter += 1
 
-            # **************************************************************************
-            # TODO
-            # **************************************************************************
-            # Now, the enemy does an action
             # An enemy action is a response to the player action
             self.print_enemy_response(str_chosen_action)
-                
                        
             # Print the enemy info after the action (mostly just for hp)
             self.enemy.print_info()
@@ -161,7 +161,8 @@ the correct decision, and why the other side is dead wrong.''']
             # Check if the encounter is over
             if self.enemy.hp <= 0:
                 self.done = True
-                print '\n***** Encounter Over *****'
+                s = '\n***** Encounter Over *****'
+                printing.print_blue(s)
         
         # After encounter, do a roll for making allies
         if self.enemy.enemy_type != 'Secret Service':

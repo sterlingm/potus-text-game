@@ -59,6 +59,24 @@ def print_brb():
     print '\033[00;37m'
 
 
+def print_blue(string):
+    print '\033[00;34m' + string
+    print '\033[00;37m'
+
+def print_cyan(string):
+    print '\033[00;36m' + string
+    print '\033[00;37m'
+
+def print_bold_red(string):
+    print '\033[01;31m' + string
+    print '\033[00;37m'
+
+
+def print_red(string):
+    print '\033[00;31m' + string
+    print '\033[00;37m'
+
+
 # Split str on ',' and pr
 def print_actions(str_actions):
     print "\nChoose an action"
