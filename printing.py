@@ -8,7 +8,13 @@ def delay_print(s):
     for c in s:
         sys.stdout.write('%s' % c)
         sys.stdout.flush()
-        time.sleep(0.025)
+        time.sleep(0.05)
+
+def delay_print_faster(s):
+    for c in s:
+        sys.stdout.write('%s' % c)
+        sys.stdout.flush()
+        time.sleep(0.035)
 
 def print_brb():
     str_big = '''
@@ -83,10 +89,14 @@ def print_actions(str_actions):
     for s in str_actions:
         print "%s/%s: %s" % (s[0].lower(), s[0].upper(), s)
         
-def print_locs(str_locs):
+def print_locs(str_locs, rooms_dict):
     print("\n\nEnter an index for a connecting room:")
     for i, s in enumerate(str_locs):
-        print "%i: %s" % (i, s)
+        r = rooms_dict[s]
+        if r.time_dec == 1:
+            print "%i: %s (1 minute)" % (i, s)
+        else:
+            print "%i: %s (%i minutes)" % (i, s, r.time_dec)
 
 
 def print_enemies(enemies):

@@ -66,40 +66,54 @@ def process_move(char, rooms_dict, small_talk_lines, ask_lines):
         char: Updated Character instance
     '''
 
-    char_def = 12
+    char_def = 15
 
+    str_invalid_input = '******* Invalid Input ********'
     
     # List all rooms to move to and get an index
-    printing.print_locs(char.room.connections)
-    num = input("\n")
+    printing.print_locs(char.room.connections, rooms_dict)
 
-    time_dec = char.room.time_dec
+    try:
+        num = int(raw_input("\n"))
 
-    i = 0
-    while i < len(char.room.enemies):
-        # do stuff
-        e = char.room.enemies[i]
+        time_dec = char.room.time_dec
 
-        # Roll 1d20
-        roll = random.randint(0,20)
-        
-        # If enemy loves small talk, they get a huge bonus
-        if e.strength == 'Small talk':
-            roll += 10
+        if num > -1 and num < len(char.room.connections):
+            # Go through the list of enemies to see if they will interact with 
+            # the player
+            i = 0
+            while i < len(char.room.enemies):
+                # do stuff
+                e = char.room.enemies[i]
 
-        # Check if the roll was high enough
-        if roll > char_def:
-            # Start encounter
-            print '\nUh-oh, %s wants to talk to you!' % e.name
-            process_encounter(char, e, small_talk_lines, ask_lines)
-            i-=1
+                # Roll 1d20
+                roll = random.randint(0,20)
+                
+                # If enemy loves small talk, they get a huge bonus
+                if e.strength == 'Small talk':
+                    roll += 10
 
-        i+=1
+                # Check if the roll was high enough
+                if roll > char_def:
+                    # Start encounter
+                    s = '\nUh-oh, %s wants to talk to you!' % e.name
+                    printing.print_bold_red(s)
+                    process_encounter(char, e, small_talk_lines, ask_lines)
+                    i-=1
 
-    # Switch the Character's room
-    char.switch_room(rooms_dict[ char.room.connections[num] ])
+                i+=1
 
-    return [char, time_dec]
+            # Switch the Character's room
+            char.switch_room(rooms_dict[ char.room.connections[num] ])
+
+            return [char, time_dec]
+        else:
+            print str_invalid_input
+            return [char, 0]
+    
+    except ValueError:
+        print str_invalid_input
+        return [char, 0]
 
 
 
@@ -358,14 +372,13 @@ def begin(char, rooms, small_talk_lines, ask_lines):
     '''
 
     os.system('reset')
+
+    print 'Enter your name'
+    char.name = raw_input('\n')
+
     str_wel = "\nWelcome %s!" % char.name
     str_intro = '''
-        ######################################################
-        ######################################################
-        ######################################################
-        
-        Welcome %s!\n
-        You are about to play POTUS!
+        You are about to play Big Red Button!
         Your goal: Find the President and stop him from pushing
         the\n\n
     '''
@@ -375,29 +388,27 @@ def begin(char, rooms, small_talk_lines, ask_lines):
     This part of the White House is home to the Oval Office, the Cabinet Room, 
     and other offices of the Executive Branch.
     The President roams these halls throughout the day, discussing various 
-    matters with his staff, and letting everybody know how cool he is.
-    
-    '''
+    matters with his staff, and letting everybody know how cool he is.'''
 
     str_rules = '''
-    Each room you enter may contain several employees. You may choose to 
-    interact with these people, or they may interact with you. The point of 
-    interacting with people is to make them your ally. If you want to really 
-    hardball the President, it helps to have people in your corner. However, the
+    Each room you enter may contain several people. You may choose to interact 
+    with these people, or they may interact with you. The point of interacting 
+    with people is to make them your ally. If you want to really hardball the 
+    President, it helps to have people in your corner. However, the
     clock is ticking so you don't want to interact with everyone.
     
     When you interact with these people, you will have two options: "Small talk" 
     or "Ask". Small talk will ask the person about the weather or about some 
-    other thing nobody cares about. "Ask" will prompt you to ask the person 
-    about what's going on with the current China-Muslim-Mexican conflict, or 
-    something else that might press people to talk about policy.
+    other thing nobody cares about. "Ask" will ask the person about what's going 
+    on with the current China-Muslim-Mexican conflict, or something else that 
+    might press people to talk about policy.
     
     The goal is to end the interaction (you've got something to do, remember?).  
     Most types of employees will be strong or weak against a type of action. For 
     example, members of Congress like to seem friendly, but they hate being 
     asked hard questions. If you encounter one, don't even think about trying to
     "Small talk" them, that's their livelihood. "Ask" them something about 
-    policy though? They'll be flying away.
+    policy, though, and they'll be flying away.
 
     After an encounter, you can try to make the employee one of your allies.
 
@@ -418,10 +429,10 @@ def begin(char, rooms, small_talk_lines, ask_lines):
     '''
 
     str_task = '''
-    Your task is to find the President and calm him down. Explore the West Wing,
-    gather information from the people in the offices about the President's 
-    location, and make sure to find him FAST before he does anything 
-    irreversible! It is up to YOU to stop him from pushing the
+    Your task is to find the Oval Office to talk with the President and change 
+    his mind. Explore the West Wing, make some allies for your cause, and find 
+    the POTUS as soon as possible before he does something irreversible! It is 
+    up to YOU to stop him from pushing the
 
     '''
 
@@ -435,44 +446,32 @@ def begin(char, rooms, small_talk_lines, ask_lines):
     ******************************************************************
     *****************************************************************
     '''
+                
+    str_invalid_input = '******* Invalid Input ********'
 
     # Print the opening message
-    #print str_wel
-    #print str_intro
-    #printing.print_brb()
-    #print 'Press Enter to begin'
-    #time.sleep(1.0)
+    printing.delay_print(str_wel)
+    printing.delay_print(str_intro)
+    printing.print_brb()
+
+    print 'Press Enter to begin'
+    var = raw_input('')
+    time.sleep(1.0)
 
     # Print the game introduction
-    #printing.delay_print(str_story)
-    #printing.delay_print(str_task)
-    #print str_loc
-    #print str_story
-    #print str_task
+    printing.delay_print(str_story)
+    printing.delay_print(str_task)
     
-    #time.sleep(0.2)
-    #printing.print_brb()
+    time.sleep(0.2)
+    printing.print_brb()
 
-    #printing.delay_print(str_loc)
-    #printing.delay_print(str_rules)
+    printing.delay_print_faster(str_loc)
+    printing.delay_print_faster(str_rules)
 
 
     str_prompt = "\nChoose an action"
     str_actions = ['Move','Interact','Look Around','Quit']
-    
-    #printing.print_actions(str_actions)
 
-
-
-    # Build EncounterAction objects
-    # char is a Character object passed in
-    # Create an enemy
-    #print 'Creating Enemy'
-    #e = enemy.Enemy(0, 'James McCotter', 10, ['Small talk'], [])
-    #enc = encounter.Encounter(char, e)
-    #enc.print_intro_str()
-    #enc.go()
-    
 
     time_left = 30
     reached_potus = False
@@ -481,6 +480,8 @@ def begin(char, rooms, small_talk_lines, ask_lines):
     # Begin the main loop to play the game
     while not done:
 
+        if time_left < 1:
+            break
 
         if char.room.name == 'Oval Office':
             reached_potus = True
@@ -511,18 +512,30 @@ def begin(char, rooms, small_talk_lines, ask_lines):
 
 
         elif var == 'i' or var == 'I':
-            printing.print_enemies(char.room.enemies)
-            num = input('\n')
 
-            e = char.room.enemies[num]
+            if len(char.room.enemies) > 0:
+                printing.print_enemies(char.room.enemies)
+                try:
+                    num = int(raw_input('\n'))
+                    if num > -1 and num < len(char.room.enemies):
+                        e = char.room.enemies[num]
 
-            elapsed_time = process_encounter(char, e, small_talk_lines, 
-                    ask_lines)
+                        elapsed_time = process_encounter(char, e, small_talk_lines, 
+                                ask_lines)
 
-            s = '\nElapsed time during encounter: %i minutes\nTime left: %i' % \
-            (elapsed_time, time_left)
-            printing.print_red(s)
-            time_left -= elapsed_time
+                        s = '\nElapsed time during encounter: %i minutes\nTime left: %i' % \
+                        (elapsed_time, time_left)
+                        printing.print_red(s)
+                        time_left -= elapsed_time
+                    else:
+                        print str_invalid_input
+
+                except ValueError:
+                    print str_invalid_input
+
+            else:
+                s = 'There are no enemies in this room to interact with.'
+                printing.print_blue(s)
 
             
         elif var == 'q' or var == 'Q':

@@ -1,4 +1,5 @@
 import printing
+import random
 
 class Enemy(object):
 
@@ -32,9 +33,9 @@ class Enemy(object):
         total_dmg = base_damage 
 
         if action in self.weakness:
-            total_dmg = total_dmg + 2
+            total_dmg = total_dmg + random.randint(0,3)
         elif action in self.strength:
-            total_dmg = total_dmg - 2
+            total_dmg = total_dmg - random.randint(0,3)
 
         if total_dmg < 0:
             total_dmg = 0

@@ -33,7 +33,7 @@ class POTUSBattle(object):
         self.potus_calm = {}
 
 
-        self.win_threshold = 16
+        self.win_threshold = 10
 
         self.init_potus_text()
 
@@ -64,7 +64,7 @@ class POTUSBattle(object):
             walks over to his desk and picks up the phone. "John! How much 
             longer until its ready?"
             
-            "Mr. President! Stop! You can't press the big red button!"
+            You yell, "Mr. President! Stop! You can't press the big red button!"
 
             The President turns and looks at you with pure disgust, waiting for 
             you to explain yourself.
@@ -74,7 +74,7 @@ class POTUSBattle(object):
         self.str_explain = '''
             You've found the President! 
 
-            Your goal is to stop him from pressing the button. There are 3 ways 
+            Your goal is to stop him from pressing the button. There are 2 ways 
             to stop him: 
 
             Threaten - You can attempt to threaten the President in response to 
@@ -266,21 +266,21 @@ class POTUSBattle(object):
         '''
         #print 'In process_threaten'
 
-        printing.delay_print(self.str_threaten)
+        printing.delay_print_faster(self.str_threaten)
 
         base_roll = random.randint(5,20)
         allies_mod = len(self.char.allies)*1.5
         anger_mod = self.anger / 20.0
         roll = base_roll + allies_mod - anger_mod
-        print ('base: %i allies_mod: %i anger: %i anger_mod: %i roll: %i' % 
-                (base_roll, allies_mod, self.anger, anger_mod, roll))
+        #print ('base: %i allies_mod: %i anger: %i anger_mod: %i roll: %i' % 
+        #(base_roll, allies_mod, self.anger, anger_mod, roll))
         return roll
 
     def process_reason(self):
         ''' Process a reason action against the POTUS.
         '''
         #print 'In process_reason'
-        printing.delay_print(self.str_reason)
+        printing.delay_print_faster(self.str_reason)
         
         base_roll = random.randint(5,20)
         time_mod = self.time_left / 2
@@ -329,7 +329,7 @@ class POTUSBattle(object):
 
         var = raw_input('\n')
 
-        printing.delay_print(self.str_intro)
+        printing.delay_print_faster(self.str_intro)
 
         roll = 0
          
@@ -371,7 +371,7 @@ class POTUSBattle(object):
                 
 
             if self.anger > 99:
-                printing.delay_print(self.str_lost_anger)
+                printing.delay_print_faster(self.str_lost_anger)
                 done = True
         
             if not done:
@@ -382,16 +382,16 @@ class POTUSBattle(object):
 
         if self.won:
             if self.win_attempt == self.threaten_attempt_flag:
-                printing.delay_print(self.str_won_threaten)
+                printing.delay_print_faster(self.str_won_threaten)
             elif self.win_attempt == self.reason_attempt_flag:
-                printing.delay_print(self.str_won_reason)
+                printing.delay_print_faster(self.str_won_reason)
             
             print '\n\nEVERYBODY LIVES\nGREAT JOB\n\n'
         else:
             if self.win_attempt == self.threaten_attempt_flag:
-                printing.delay_print(self.str_lost_threaten)
+                printing.delay_print_faster(self.str_lost_threaten)
             elif self.win_attempt == self.reason_attempt_flag:
-                printing.delay_print(self.str_lost_reason)
+                printing.delay_print_faster(self.str_lost_reason)
 
             print '\n\nYOU BLEW IT\nEVERYBODY DIES\n\n'
 

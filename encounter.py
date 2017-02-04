@@ -134,7 +134,7 @@ the correct decision, and why the other side is dead wrong.''']
             elif str_chosen_action == 'a' or str_chosen_action == 'A':
                 str_chosen_action = 'Ask'
             else:
-                s = '******* Incorrect Input ********'
+                s = '******* Invalid Input ********'
                 print s
                 continue
 
@@ -175,7 +175,7 @@ the correct decision, and why the other side is dead wrong.''']
                     self.char.allies.append(self.enemy.name)
 
         # Set how much decrement the time
-        self.time_dec = self.strong_against_counter / 2
+        self.time_dec = self.strong_against_counter 
               
 
 
