@@ -1,0 +1,7 @@
+Hit enter to skip text ahead
+
+Set hotkeys for each room, then we could display rooms and actions in the same way:
+a/A: Action 1
+b/B: Baction 
+etc
+and use only one function
